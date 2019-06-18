@@ -94,6 +94,53 @@ Scala 2.11.12 is better to use with Java8, so donot install Java11.
   hostnamectl
   ```
 
+## Install PostgreSQL
+1. Install PostgreSQL
+   ```
+   sudo apt update
+   sudo apt install postgresql postgresql-contrib
+   sudo service postgresql 
+   ```
+2. Log into Postgre user
+   ```
+   sudo -u postgres -i
+   postgres@ip-10-0-0-9:~$ psql
+   psql (10.8 (Ubuntu 10.8-0ubuntu0.18.04.1))
+   Type "help" for help.
+   
+   postgres=# 
+   ```
+3. Configuration
+   ```
+   cd /etc/postgresql/10/main
+   ```
+   ```
+   vi postgresql.conf
+
+   ...
+   listen_addresses = '*' 
+   ...
+   ```
+   ```
+   vi pg_hba.conf
+   host    all     all     0.0.0.0/0         md5
+   ```
+   Restart Postrgre!
+   ```
+   sudo service postgresql restart
+   ```
+4. Create DB
+   ```
+   CREATE DATABASE <DB_NAME>;
+   CREATE USER <USER_NAME> WITH PASSWORD <PASSWORD>;
+   GRANT ALL PRIVILEGES ON DATABASE <DB_NAME> to <USER_NAME>;
+   ```
+5. Connect to Spark master instance to test whether it is connected.
+   ```
+   sudo apt-get install postgresql-client
+   psql -h <POSTGRE_HOST> -d <DB_NAME> -U <USER_NAME> -p <PORT>
+   ```
+
 ## Install Kafka Cluster
 Set new EC2 instances, set up environments including:
    * Passwordless SSH
