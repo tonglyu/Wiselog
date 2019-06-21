@@ -140,6 +140,10 @@ Scala 2.11.12 is better to use with Java8, so donot install Java11.
    sudo apt-get install postgresql-client
    psql -h <POSTGRE_HOST> -d <DB_NAME> -U <USER_NAME> -p <PORT>
    ```
+6. Connect to Spark
+   ```
+   wget https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
+   ```
 
 ## Install Kafka Cluster
 Set new EC2 instances, set up environments including:
