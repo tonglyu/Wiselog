@@ -1,0 +1,15 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - wiselog</title>
+      {% else %}
+      <title>Welcome to Wiselog</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>Microblog: <a href="/index">Home</a></div>
+        <hr>
+        <!--block name should be unique-->
+        {% block content %}{% endblock %}
+    </body>
+</html>
