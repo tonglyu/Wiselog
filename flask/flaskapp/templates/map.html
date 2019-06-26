@@ -6,7 +6,7 @@
     </div>
 </div>
 <script>
-    var data = {{ data |tojson}}
+    var data = {{ data | tojson }};
     console.log(typeof (data))
     Highcharts.mapChart('map', {
         chart: {
@@ -18,7 +18,7 @@
         //     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
         title: {
-            text: 'Population density by country (/km²)'
+            text: 'Access Count for different countries'
         },
 
         mapNavigation: {
@@ -27,8 +27,7 @@
         colorAxis: {
             type: 'logarithmic',
             endOnTick: false,
-            startOnTick: false,
-            min: 50000
+            startOnTick: true,
         },
         series: [{
             data: data,

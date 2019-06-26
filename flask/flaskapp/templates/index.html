@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block title %}Welcome to WiseLog{% endblock title %}
 
 {% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -24,53 +23,28 @@
         <!--{% for post in posts %}-->
         <!--<div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>-->
         <!--{% endfor %}-->
-        {% block map %}
-        <div class="col-md-10" id="map-container">
-            <div id="map">
+        <div class="card">
+            <div class="card-header">
+                Company Name
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('search_name') }}" method="post" class="tab-pane fade show active" id="form" role="form" onsubmit="submit">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="search-input">Company name</label>
+                            <input type="search" class="form-control" id="com_name" name="com_name" placeholder="Enter company's name" value="{{ request.form['com_name'] }}">
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <button type="submit" class="btn btn-outline-info">Search</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <script>
-            var data = {{ data |tojson }};
-            console.log(typeof (data))
-            Highcharts.mapChart('map', {
-                chart: {
-                    map: 'custom/world',
-                    borderWidth: 1
-                },
 
-                // colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
-                //     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
-                title: {
-                    text: 'Population density by country (/km²)'
-                },
 
-                mapNavigation: {
-                    enabled: true
-                },
-                colorAxis: {
-                    type: 'logarithmic',
-                    endOnTick: false,
-                    startOnTick: true,
-                },
-                series: [{
-                    data: data,
-                    joinBy: ['iso-a2', 'country'],
-                    animation: true,
-                    name: 'Access Count',
-                    states: {
-                        hover: {
-                            color: '#a4edba'
-                        }
-                    },
-                    tooltip: {
-                        valueSuffix: 'times'
-                    },
-                    shadow: false
-                }]
-            });
-
-        </script>
+        {% block map %}
         {% endblock map%}
     </div>
 </section>
