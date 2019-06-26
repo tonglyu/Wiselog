@@ -1,4 +1,21 @@
 {% extends "base.html" %}
+{% block title %}Welcome to WiseLog{% endblock title %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <img src="{{ url_for('static', filename='images/logo.svg') }}" height="35" width="35" style="margin-right: 5px">
+    <a class="navbar-brand" href="{{ url_for('index') }}">WiseLog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{{ url_for('index') }}">Search</a>
+            <!--<a class="nav-item nav-link" href="https://github.com/ZiweiYuan/UnivBoard">Github</a>-->
+        </div>
+    </div>
+</nav>
+{% endblock navbar%}
 
 {% block content %}
     <h1>Hi, {{ user.username }}!</h1>
@@ -6,4 +23,4 @@
     <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
     {% endfor %}
     <div>{{ result }}</div>
-{% endblock %}
+{% endblock content%}

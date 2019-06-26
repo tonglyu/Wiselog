@@ -25,7 +25,8 @@ def connectPostgres():
     end_date = '2016-03-31'
     cur.execute ( "select cik, city_name, sum(count) as total from company_geo_table "
                   "where cik = %s and (date between %s and %s) "
-                  "group by cik, city_name;",(cik, start_date, end_date))
+                  "group by (cik, city_name)"
+                  "order by total desc limit 20;",(cik, start_date, end_date))
     raw = cur.fetchall ()
     #data type: json
     jsonData = json.dumps ( raw, cls=DecimalEncoder )
