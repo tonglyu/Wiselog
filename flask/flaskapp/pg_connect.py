@@ -23,14 +23,13 @@ def connectPostgres():
     cik = '1288776'
     start_date = '2016-03-01'
     end_date = '2016-03-31'
-    cur.execute ( "select cik, city_name, sum(count) as total from company_geo_table "
+    cur.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
                   "where cik = %s and (date between %s and %s) "
-                  "group by (cik, city_name)"
-                  "order by total desc limit 20;",(cik, start_date, end_date))
+                  "group by (cik, country_iso_code)",(cik, start_date, end_date))
     raw = cur.fetchall ()
     #data type: json
-    jsonData = json.dumps ( raw, cls=DecimalEncoder )
+    # jsonData = json.dumps ( raw, cls=DecimalEncoder )
     cur.close ()
     conn.close ()
-    return jsonData
+    return raw
 
