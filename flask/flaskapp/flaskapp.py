@@ -7,8 +7,7 @@ user = {'username': 'tong'}
 @app.route('/')
 @app.route('/home')
 def index():
-
-    return render_template ( 'index.html', user=user )
+    return render_template ( 'index.html')
 
 @app.route('/search',methods=['Get', 'POST'])
 def search_name():
@@ -22,7 +21,7 @@ def search_name():
         tmp['value'] = int ( res[i][2] )
         tmp['name'] = res[i][1]
         data.append ( tmp )
-    return render_template('map.html', user=user, data = data)
+    return render_template('map.html', data = data)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, threaded=True)

@@ -4,8 +4,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <img src="{{ url_for('static', filename='images/logo.svg') }}" height="35" width="35" style="margin-right: 5px">
     <a class="navbar-brand" href="{{ url_for('index') }}">WiseLog</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
@@ -19,35 +20,96 @@
 {% block content %}
 <section>
     <div class="container-fluid">
-        <h1>Hi, {{ user.username }}!</h1>
         <!--{% for post in posts %}-->
         <!--<div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>-->
         <!--{% endfor %}-->
-        <div class="card">
-            <div class="card-header">
-                Company Name
-            </div>
-            <div class="card-body">
-                <form action="{{ url_for('search_name') }}" method="post" class="tab-pane fade show active" id="form" role="form" onsubmit="submit">
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="search-input">Company name</label>
-                            <input type="search" class="form-control" id="com_name" name="com_name" placeholder="Enter company's name" value="{{ request.form['com_name'] }}">
+        <div class="container">
+            <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
+                  role="form" onsubmit="submit">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="search_method" id="cik_radio"
+                                   value="1" checked="true">
+                            <label class="form-check-label" for="cik_radio">CIK number</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="search_method" id="com_radio"
+                                   value="2">
+                            <label class="form-check-label" for="com_radio">Company name</label>
                         </div>
                     </div>
-                    <div class="form-row justify-content-center">
-                        <button type="submit" class="btn btn-outline-info">Search</button>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        <label for="search_input">Company name</label>
+                        <input type="search" class="form-control" id="com_name" name="com_name"
+                               placeholder="Enter company's name" value="{{ request.form['com_name'] }}">
                     </div>
-                </form>
-            </div>
+                    <div class="form-group col-md-3">
+                        <label for="start_date">Start Date</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input class="form-control" id="start_date" name="start_date" placeholder="MM/YYYY" type="text"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="end_date">End Date</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input class="form-control" id="end_date" name="end_date" placeholder="MM/YYYY" type="text"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
 
 
         {% block map %}
         {% endblock map%}
     </div>
 </section>
+<script type="text/javascript">
+    $('#start_date').datepicker({
+        format: "yyyy MM",
+        startView: 2,
+        maxViewMode: 1,
+        minViewMode: 1,
+        autoclose: true,
+        startDate: "2016-01",
+        endDate: "2017-06"
+    }).on("changeDate",function(){
+        $("#end_date").datepicker("setStartDate",$("#start_date").val())
+        console.log($("#start_date").val())
+    });
 
+    $('#end_date').datepicker({
+        format: "yyyy MM",
+        startView: 2,
+        maxViewMode: 1,
+        minViewMode: 1,
+        autoclose: true,
+        startDate: "2016-01",
+        endDate: "2017-06"
+    }).on("changeDate",function(){
+        $("#start_date").datepicker("setEndDate",$("#end_date").val())
+    });
+    // $("#date").datepicker({
+    //     format: "yyyy MM",
+    //     startView: 2,
+    //     maxViewMode: 1,
+    //     minViewMode: 1,
+    //     autoclose: true,
+    //     startDate: "2016-01",
+    //     endDate: "2017-06"
+    // })
+</script>
 {% endblock content%}
 
