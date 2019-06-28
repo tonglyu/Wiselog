@@ -3,6 +3,7 @@ import psycopg2.extensions
 import config
 import json
 import decimal
+import time
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -23,6 +24,7 @@ def connectPostgres(keyword, method, start_date, end_date):
     end_date = end_date
     cur = conn.cursor ()
     print(method)
+    begin = time.time()
     if method == "cik":
         cik = keyword
         cur.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
@@ -35,9 +37,14 @@ def connectPostgres(keyword, method, start_date, end_date):
         cur.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
                       "where cik = (select cik from cik_company where name = %s) and (date between %s and %s) "
                       "group by (cik, country_iso_code)", (name, start_date, end_date) )
-    #data type: json
-    # jsonData = json.dumps ( raw, cls=DecimalEncoder )
     raw = cur.fetchall ()
+    #data type: json
+    jsonData = json.dumps ( raw, cls=DecimalEncoder )
+    print(jsonData)
+    end = time.time()
+    print(end - begin)
+
+
     cur.close ()
     conn.close ()
     return raw
