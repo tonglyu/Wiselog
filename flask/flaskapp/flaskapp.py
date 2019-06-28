@@ -12,10 +12,11 @@ def index():
 @app.route('/search',methods=['Get', 'POST'])
 def search_name():
     if request.method == "POST":
-        com_name = request.form['keyword']
+        keyword = request.form['keyword']
+        method = request.form['search_method']
         start_date = request.form['start_date']
         end_date = request.form['end_date']
-        res = pg_connect.connectPostgres (com_name, start_date, end_date)
+        res = pg_connect.connectPostgres (keyword, method, start_date, end_date)
     data = []
     for i in range ( len ( res ) ):
         tmp = {}
