@@ -11,7 +11,7 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(obj)
 
 
-def connectPostgres(com_name):
+def connectPostgres(com_name, start_date, end_date):
     try:
         conn = psycopg2.connect(database=config.POSTGRES_CONFIG['dbname'],user=config.POSTGRES_CONFIG['user'],
                                 password=config.POSTGRES_CONFIG['password'],host=config.POSTGRES_CONFIG['host'])
@@ -21,8 +21,8 @@ def connectPostgres(com_name):
 
     cur = conn.cursor ()
     cik = com_name
-    start_date = '2016-01-01'
-    end_date = '2016-05-31'
+    start_date = start_date
+    end_date = end_date
     cur.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
                   "where cik = %s and (date between %s and %s) "
                   "group by (cik, country_iso_code)",(cik, start_date, end_date))
