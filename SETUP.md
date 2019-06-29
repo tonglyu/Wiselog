@@ -96,12 +96,31 @@ Scala 2.11.12 is better to use with Java8, so donot install Java11.
    WORKER_NODE1_PRIVATE_IP
    WORKER_NODE2_PRIVATE_IP
    ```
-4. Test Running
+4. Install jar file     
+  Download the required jars:        
+    a) create a folder under /usr/local/spark called lib
+    ```
+    cd /usr/local/spark
+    mkdir lib
+    cd lib
+    ```
+    b) download the following files to that folder:
+    ```
+    wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar
+    wget http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.1/hadoop-aws-2.7.1.jar
+    ```
+    Change spark default conf file:
+    ```
+    vi /usr/local/spark/conf/spark-defaults.conf
+    spark.executor.extraClassPath /usr/local/spark/lib/aws-java-sdk-1.7.4.jar:/usr/local/spark/lib/hadoop-aws-2.7.1.jar
+    spark.driver.extraClassPath /usr/local/spark/lib/aws-java-sdk-1.7.4.jar:/usr/local/spark/lib/hadoop-aws-2.7.1.jar
+    ```
+5. Test Running
    ```
    sh /usr/local/spark/sbin/start-all.sh
    sh /usr/local/spark/sbin/stop-all.sh
    ```
-5. Edit .bash_profile
+6. Edit .bash_profile
    ```
    export PATH=/usr/local/spark/bin:$PATH
    export PYSPARK_PYTHON=python3
