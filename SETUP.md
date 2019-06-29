@@ -16,6 +16,33 @@
     source ~/.bash_profile
 	echo $JAVA_HOME
     ```
+## Setting up Python
+1. Connect local to EC2
+   ```
+   chmod 0777 /home/upload #optional
+   scp -i YOUR_KEY dataIngestion/dataIngestion.py EC2_DIRECTORY
+   ```
+2. Install Python and pip
+   ```
+   sudo apt-get install python3
+   python3 --version
+   sudo apt install python3-pip
+   
+   ```
+3. Install other command line
+   ```
+   sudo apt install unzip
+   sudo apt install wget
+   ```
+4. Install AWS cli
+   ```
+   sudo apt install awscli
+   aws configure
+   AWS Access Key ID [None]: YOUR_ACCESS_KEY
+   AWS Secret Access Key [None]: YOUR_SECRET_KEY
+   Default region name [None]: us-west-2
+   Default output format [None]: json
+   ```
 
 ## Setting up passwordless SSH
 This allows your machines to ssh into each other without password. Many tools, especially the ones following Master-Worker architecture, require this. Examples: Flink, Spark.      
@@ -145,125 +172,94 @@ Scala 2.11.12 is better to use with Java8, so donot install Java11.
    wget https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
    ```
 
-## Install Kafka Cluster
-Set new EC2 instances, set up environments including:
-   * Passwordless SSH
-   * Java 8
-   * Scala 2.11.12     
-
-### [Zookeeper](https://www.cnblogs.com/wxisme/p/5178211.html)
-1. Download zookeeper
+## [Install Airflow](https://blog.insightdatascience.com/scheduling-spark-jobs-with-airflow-4c66f3144660)
+1. Install airflow
    ```
-   wget https://archive.apache.org/dist/zookeeper/zookeeper-3.4.12/zookeeper-3.4.12.tar.gz  
-   tar -xvzf zookeeper-3.4.12.tar.gz
+   pip3 install apache-airflow
+   vi .bash_profile
+   export AIRFLOW_HOME=~/airflow
+   export PATH=$PATH:~/.local/bin
+   source .bash_profile
    ```
-2. Navigate to the ZooKeeper properties file (/conf/zoo.cong) file and modify as shown.
-   Set 0.0.0.0 for current node, and private ip for other nodes
+2. Initialising the metadata DB
    ```
-    tickTime=2000
-    dataDir=/var/lib/zookeeper
-    clientPort=2181
-    initLimit=5
-    syncLimit=2
-    server.1=0.0.0.0:2888:3888    #ZOOKEEPER_NODE1(corresponding to myid)
-    server.2=ZOOKEEPER_NODE2_PRIVATE_IP:2888:3888  #private_ip of EC2
-    server.3=ZOOKEEPER_NODE3_PRIVATE_IP:2888:3888
-    autopurge.snapRetainCount=3
-    autopurge.purgeInterval=24
+   airflow initdb
    ```
-3. Change myid file
+3. Make Dag
    ```
-   mkdir /var/lib/zookeeper  #keep same with dataDir
-   chmod 755 /var/lib/zookeeper #optional in case of permission problem
-   chown USER_NAME /var/lib/zookeeper #optional in case ofpermission problem
-   echo 1 > /var/lib/zookeeper/myid
+   cd airflow/
+   mkdir dags
+   cd dags
+   python3 YOUR_DAG.py
+   airflow list_dags 
    ```
-4. Move to other nodes
+4. Start airflow
    ```
-   scp -r zookeeper-3.4.12/ ZOOKEEPER_NODE2_PRIVATE_IP:/home/ubuntu
+   airflow backfill YOUR_DAG_ID -s YYYY-MM-DD
    ```
-5. Test if every nodes works, start zookeeper on each node
+5. Starting the webserver
    ```
-   ./bin/zkServer.sh start-foreground
-   ```
-   Open a new terminal and check status of one node
-   ```
-   ./bin/zkServer.sh status
+   airflow webserver -p 8082
    ```
 
-### [Kafka](https://www.cnblogs.com/wxisme/p/5196302.html)
-1. Download Kafka
+## [Install Flask WSGI](https://medium.com/@jQN/deploy-a-flask-app-on-aws-ec2-1850ae4b0d41)
+1. Install the apache webserver
    ```
-   wget https://archive.apache.org/dist/kafka/0.8.2.2/kafka_2.11-0.8.2.2.tgz
-   tar -zxvf kafka_2.11-0.8.2.2.tgz 
-   ```
-2. Navigate to the Apache Kafka® properties file (/config/server.properties) and customize the following:
-    ```
-    broker.id=0 #start from zero, each node should be different
-    host.name=ZOOKEEPER_NODE1_PRIVATE_IP
-    ...
-    num.network.threads=3
-    default.replication.factor = 2
-    auto.create.topics.enable = true
-    ...
-    log.dirs=/var/lib/kafka/logs
-    zookeeper.connect=ZOOKEEPER_NODE1_PRIVATE_IP:2181,ZOOKEEPER_NODE2_PRIVATE_IP:2181,ZOOKEEPER_NODE3_PRIVATE_IP:2181
-    ```
-3. Make directories for log file and give permission for writing
-   ```
-   sudo mkdir /var/lib/kafka/logs
-   sudo chmod 0777 /var/lib/kafka/logs #optional in case of permission problem
-   ```
-4. Copy kafka folder to other nodes, and revise unique hostname and broker id in property file
-5. First start zookeeper, then start kafka
-   ```
-   ./bin/kafka-server-start.sh config/server.properties
-   ```
-6. Test messages
-   Create topic
-   ```
-   ./bin/kafktopics.sh -zookeeper ZOOKEEPER_NODE1_PRIVATE_IP:2181,ZOOKEEPER_NODE2_PRIVATE_IP:2181,ZOOKEEPER_NODE3_PRIVATE_IP:2181 -topic test -replication-factor 2 -partitions 3 -create
-   ```
-   Check topic lists
-   ```
-   ./bin/kafktopics.sh -zookeeper ZOOKEEPER_NODE1_PRIVATE_IP:2181,ZOOKEEPER_NODE2_PRIVATE_IP:2181,ZOOKEEPER_NODE3_PRIVATE_IP:2181 -list
-   ```
-   Set up producer, here we have same broker nodes as zookeeper nodes
-   ```
-   ./bin/kafka-console-producer.sh -broker-list ZOOKEEPER_NODE1_PRIVATE_IP:9092,ZOOKEEPER_NODE2_PRIVATE_IP:9092,ZOOKEEPER_NODE3_PRIVATE_IP:9092 -topic test
-   ```
-   Set up consumer on another node
-   ```
-   ./bin/kafka-console-consumer.sh -zookeeper ZOOKEEPER_NODE1_PRIVATE_IP:2181,ZOOKEEPER_NODE2_PRIVATE_IP:2181,ZOOKEEPER_NODE3_PRIVATE_IP:2181 -from-beginning -topic test
+   sudo apt-get update
+   sudo apt-get install apache2
+   sudo apt-get install libapache2-mod-wsgi-py3
+   sudo apt-get install libpq-dev
    ```
 
+2. Install Flask
+   ```
+   sudo -H pip3 install flask
+   mkdir ~/flaskapp
+   sudo ln -sT ~/flaskapp /var/www/html/flaskapp
+   cd ~/flaskapp
+   $ echo "Hello World" > index.html
+   ```
+3. Running a simple Flask app
+   Create flaskapp.py
+   ```
+   from flask import Flask
+   app = Flask(__name__)
+   @app.route('/')
+   def hello_world():
+    return 'Hello from Flask!'
+   if __name__ == '__main__':
+    app.run()
+   ```
+   Create a flaskapp.wsgi file to load the app
+   ```
+   import sys
+   sys.path.insert(0, '/var/www/html/flaskapp')
+   from flaskapp import app as application
+   ```
+4. Enable mod_wsgi.
+   ```
+   sudo vim /etc/apache2/sites-enabled/000-default.conf
+   ```
+   ```
+   WSGIDaemonProcess flaskapp threads=5
+   WSGIScriptAlias / /var/www/html/flaskapp/flaskapp.wsgi
+   <Directory flaskapp>
+    WSGIProcessGroup flaskapp
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+   </Directory>
+   ```
+5. Restart the webserver
+   ```
+   sudo service apache2 restart
+   ```
+6. Check the log
+   ```
+   sudo tail -f /var/log/apache2/error.log
+   ```
+[Debug Here](https://stackoverflow.com/questions/31252791/flask-importerror-no-module-named-flask)
 
-## Setting up Python
-1. Connect local to EC2
-   ```
-   chmod 0777 /home/upload #optional
-   scp -i YOUR_KEY dataIngestion/dataIngestion.py EC2_DIRECTORY
-   ```
-2. Install Python and pip
-   ```
-   sudo apt-get install python3
-   python3 --version
-   sudo apt install python3-pip
-   
-   ```
-3. Install other command line
-   ```
-   sudo apt install unzip
-   sudo apt install wget
-   ```
-4. Install AWS cli
-   ```
-   sudo apt install awscli
-   aws configure
-   AWS Access Key ID [None]: YOUR_ACCESS_KEY
-   AWS Secret Access Key [None]: YOUR_SECRET_KEY
-   Default region name [None]: us-west-2
-   Default output format [None]: json
-   ```
+
 
 
