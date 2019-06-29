@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+
+{% block map %}
+<div class="col-md-10" id="map-container">
+    <div id="map">
+    </div>
+</div>
+<script>
+    var data = {{ data | tojson }};
+    console.log(typeof (data))
+    Highcharts.mapChart('map', {
+        chart: {
+            map: 'custom/world',
+            borderWidth: 1
+        },
+
+        // colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
+        //     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
+
+        title: {
+            text: 'Access Count for different countries'
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+        colorAxis: {
+            type: 'logarithmic',
+            endOnTick: false,
+            startOnTick: true,
+        },
+        series: [{
+            data: data,
+            joinBy: ['iso-a2', 'country'],
+            animation: true,
+            name: 'Access Count',
+            states: {
+                hover: {
+                    color: '#a4edba'
+                }
+            },
+            tooltip: {
+                valueSuffix: 'times'
+            },
+            shadow: false
+        }]
+    });
+
+</script>
+{% endblock map%}}

@@ -19,7 +19,7 @@ class DataIngestion(object):
         self.month = date.split("-")[1]
         self.day = date.split("-")[2]
 
-        self.qtr = int(self.month)//4 + 1
+        self.qtr = (int(self.month) - 1)//3 + 1
         self.src_link = "http://www.sec.gov/dera/data/Public-EDGAR-log-file-data/{Year}/Qtr{Quarter}/log{Date}.zip" \
                         .format(Year = self.year, Quarter = str(self.qtr), Date = self.date)
         self.data_file = "log{Date}.csv.gz".format(Date = self.date)
