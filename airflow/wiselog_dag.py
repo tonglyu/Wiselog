@@ -12,13 +12,13 @@ default_args = {
                 'depends_on_past': False,
                 'start_date': datetime(2016, 1, 1),
                 'end_date': datetime(2017, 5, 31),
-                'retries': 5,
+                'retries': 2,
                 'retry_delay': timedelta(minutes=1),
                 }
 
 dag = DAG('wiseLog_dag', default_args = default_args, schedule_interval = timedelta(days=1))
-configuration = " --conf \"spark.default.parallelism=24\" --conf \"spark.dynamicAllocation.enable = true\" --conf \"spark.dynamicAllocation.executorIdleTimeout = 2m\" --conf \"spark.dynamicAllocation.minExecutors = 1\" --conf \"spark.dynamicAllocation.maxExecutors = 2000\" --conf \"spakr.stage.maxConsecutiveAttempts = 10\" --conf \"spark.memory.offHeap.enable = true\" --conf \"spark.memory.offheep.size = 3g\" --conf \"spark.yarn.executor.memoryOverhead = 0.1 * (spark.executor.memory + spark.memory.offHeap.size)\""
-# postgres_package = " --packages org.postgresql:postgresql:42.1.1 "
+configuration = " --conf spark.default.parallelism=30 "
+postgres_package = " --packages org.postgresql:postgresql:42.2.5 "
 spark_file = "/home/ubuntu/batch_process.py"
 data_ingest_file = "/home/ubuntu/dataIngestion.py"
 
@@ -30,8 +30,9 @@ download_data = BashOperator(
 
 spark_master_bp = BashOperator(
                     task_id = "spark_master_batch",
-                    bash_command = "spark-submit --master spark://10.0.0.5:7077" \
+                    bash_command = "spark-submit --master spark://10.0.0.6:7077" \
                                    + configuration
+                                    +postgres_package
                                    + spark_file + " {{ ds }}",
                     dag = dag)
 
