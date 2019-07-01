@@ -4,10 +4,11 @@
 <div class="col-md-10" id="map-container">
     <div id="map">
     </div>
+    <div> {{city}}</div>
 </div>
 <script>
-    var data = {{ data | tojson }};
-    console.log(typeof (data))
+    var country_data = {{ country_data | tojson }}
+    var city_data = {{ city_data | tojson }}
     Highcharts.mapChart('map', {
         chart: {
             map: 'custom/world',
@@ -30,7 +31,7 @@
             startOnTick: true,
         },
         series: [{
-            data: data,
+            data: country_data,
             joinBy: ['iso-a2', 'country'],
             animation: true,
             name: 'Access Count',
@@ -43,6 +44,26 @@
                 valueSuffix: 'times'
             },
             shadow: false
+        }, {
+            type: 'mappoint',
+            name: 'Cities',
+            data: city_data,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#000',
+
+            },
+            colorAxis: true,
+            showInLegend: false,
+            tooltip: {
+                pointFormat: '{point.name}, {point.country}<br>' +
+                'Access count: {point.value}'
+            },
+            dataLabels: {
+                enabled: true,
+                crop: true,
+                format: '{point.name}'
+            },
         }]
     });
 
