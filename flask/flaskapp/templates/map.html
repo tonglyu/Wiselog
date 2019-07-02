@@ -12,6 +12,17 @@
     Highcharts.mapChart('map', {
         chart: {
             map: 'custom/world',
+            events: {
+              load: function () {
+                  const points = this.series[1].data
+                  points.forEach((point) => {
+                      const colorAxis = this.colorAxis[0]
+                      const color = colorAxis.toColor(point.value, point)
+                      point.color = color
+                   })
+                  this.redraw()
+              }
+            },
             borderWidth: 1
         },
 
@@ -41,23 +52,25 @@
                 }
             },
             tooltip: {
-                valueSuffix: 'times'
+                headerFormat: '<span style="color:{point.color}">●</span>' +' {point.key}:<br/>',
+                 pointFormat: 'Access count: {point.value}',
+                valueSuffix: ' times'
             },
             shadow: false
         }, {
             type: 'mappoint',
             name: 'Cities',
             data: city_data,
+            animation: true,
             marker: {
                 lineWidth: 1,
                 lineColor: '#000',
-
             },
-            colorAxis: true,
             showInLegend: false,
             tooltip: {
+                headerFormat: '<span style="color:{point.color}">●</span>' +' {point.key}:<br/>',
                 pointFormat: '{point.name}, {point.country}<br>' +
-                'Access count: {point.value}'
+                'Access count: {point.value} times'
             },
             dataLabels: {
                 enabled: true,
