@@ -12,9 +12,9 @@
 }
 
 #map-container {
-    height: 100%;
-    position:absolute;
+    height: auto;
 }
+
 .loading {
     margin-top: 10em;
     text-align: center;
