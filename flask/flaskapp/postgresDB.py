@@ -22,44 +22,48 @@ def init_db(app):
 
     # db.create_all()
 
+def getCompanies(engine, name):
+    conn = engine.connect ()
+    name = '%'+name.upper()+'%'
+    companies_sql = ''' select cik, name from cik_company where name like %s;'''
+    companies = conn.execute(companies_sql,name)
+    conn.close()
+    return companies.fetchall()
 
 def seachAcessCount(conn,keyword, method, start_date, end_date):
-
     start_date = start_date
     end_date = end_date
 
     print(method)
     begin = time.time ()
-    if method == "cik":
-        cik = keyword
-        country = conn.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
-                      "where cik = %s and (date between %s and %s) "
-                      "group by (cik, country_iso_code)", (cik, start_date, end_date) )
-        city_query = '''
-        select log.cik as cik, log.total as total, coord.country_iso_code as country_code, coord.region_name as region, 
-        coord.city_name as city, coord.lat as lat, coord.lng as lng
-        from (select cik, geoname_id, sum(count) as total from company_geo_table
-                                 where cik = %s and (date between %s and %s)
-                                 group by (cik, geoname_id) order by total desc limit 20) log
-        left join city_coordinates coord on log.geoname_id = coord.geoname_id limit 20
-                                 '''
-        city = conn.execute ( city_query, (cik, start_date, end_date) )
+    cik = keyword
+    country = conn.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
+                  "where cik = %s and (date between %s and %s) "
+                  "group by (cik, country_iso_code)", (cik, start_date, end_date) )
+    city_query = '''
+    select log.cik as cik, log.total as total, coord.country_name as country_name, coord.region_name as region, 
+    coord.city_name as city, coord.lat as lat, coord.lng as lng
+    from (select cik, geoname_id, sum(count) as total from company_geo_table
+                             where cik = %s and (date between %s and %s)
+                             group by (cik, geoname_id) order by total desc limit 20) log
+    left join city_coordinates coord on log.geoname_id = coord.geoname_id limit 20
+                             '''
+    city = conn.execute ( city_query, (cik, start_date, end_date) )
 
-    else:
-        name = keyword.upper ()
-        print(name)
-        country = conn.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
-                      "where cik = (select cik from cik_company where name = %s) and (date between %s and %s) "
-                      "group by (cik, country_iso_code)", (name, start_date, end_date) )
-        city_query = '''
-                select log.cik as cik, log.total as total, coord.country_iso_code as country_code, coord.region_name as region, 
-                coord.city_name as city, coord.lat as lat, coord.lng as lng
-                from (select cik, geoname_id, sum(count) as total from company_geo_table
-                                 where cik = (select cik from cik_company where name = %s) and (date between %s and %s)
-                                 group by (cik, geoname_id) order by total desc limit 20) log
-                left join city_coordinates coord on log.geoname_id = coord.geoname_id limit 20
-                                         '''
-        city = conn.execute (city_query, (name, start_date, end_date) )
+    # else:
+    #     name = keyword.upper ()
+    #     country = conn.execute ( "select cik, country_iso_code, sum(count) as total from company_geo_table "
+    #                   "where cik = (select cik from cik_company where name = %s) and (date between %s and %s) "
+    #                   "group by (cik, country_iso_code)", (name, start_date, end_date) )
+    #     city_query = '''
+    #             select log.cik as cik, log.total as total, coord.country_iso_code as country_code, coord.region_name as region,
+    #             coord.city_name as city, coord.lat as lat, coord.lng as lng
+    #             from (select cik, geoname_id, sum(count) as total from company_geo_table
+    #                              where cik = (select cik from cik_company where name = %s) and (date between %s and %s)
+    #                              group by (cik, geoname_id) order by total desc limit 20) log
+    #             left join city_coordinates coord on log.geoname_id = coord.geoname_id limit 20
+    #                                      '''
+    #     city = conn.execute (city_query, (name, start_date, end_date) )
 
     end = time.time ()
     print(end - begin)

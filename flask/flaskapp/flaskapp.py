@@ -4,10 +4,11 @@ from sqlalchemy import create_engine, MetaData, Table, func
 from sqlalchemy import Column, BigInteger, String, Date
 from sqlalchemy.orm import sessionmaker
 
-import pg_connect
+import json
 import postgresDB
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 user = {'username': 'tong'}
 
 postgresDB.init_db(app)
@@ -24,6 +25,7 @@ company_geo_table = Table('company_geo_table', metadata,
                           Column ('subdivision_1_name', String),
                           Column ('city_name', String),
                           autoload=True, autoload_with=engine)
+
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -31,17 +33,36 @@ session = Session()
 @app.route('/')
 @app.route('/home')
 def index():
-    return render_template ( 'index.html')
+    return render_template ( 'index.html',list=[])
 
-@app.route('/search',methods=['Get', 'POST'])
+@app.route('/searchCom', methods=["POST"])
+def search_company():
+    keyword = request.form['keyword']
+    companies_res = postgresDB.getCompanies ( engine, keyword )
+    companies = []
+    for i in range ( len ( companies_res) ):
+        tmp = {}
+        tmp["cik"] = companies_res[i][0]
+        tmp["name"] = str ( companies_res[i][1]  ).strip ().title ()
+        companies.append ( tmp )
+    return json.dumps(companies)
+    #
+
+@app.route('/search',methods=['GET', 'POST'])
 def search_name():
     if request.method == "POST":
-        keyword = request.form['keyword']
         method = request.form['search_method']
+        if method == "cik":
+            keyword = request.form['keyword']
+        else:
+            keyword = request.form['company_selector']
+        print(keyword)
+
         start_date = request.form['start_date']
         end_date = request.form['end_date']
         conn = engine.connect()
         country_res, city_res = postgresDB.seachAcessCount(conn, keyword,method, start_date, end_date)
+        conn.close()
     country_data = []
     for i in range ( len ( country_res ) ):
         tmp = {}

@@ -31,6 +31,7 @@ def connectPostgres(keyword, method, start_date, end_date):
                       "where cik = %s and (date between %s and %s) "
                       "group by (cik, country_iso_code)",(cik, start_date, end_date))
 
+
     else:
         name = keyword.upper()
         print(name)
