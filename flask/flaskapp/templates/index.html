@@ -8,83 +8,119 @@
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link" href="{{ url_for('index') }}">Search</a>
-            <!--<a class="nav-item nav-link" href="https://github.com/ZiweiYuan/UnivBoard">Github</a>-->
-        </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="#">About</a>
+            </li>
+        </ul>
     </div>
 </nav>
 {% endblock navbar%}
 
 {% block content %}
-<section>
+<div class="container-fluid content" id="body-container">
+    {% block form %}
     <div class="container-fluid">
-        <!--{% for post in posts %}-->
-        <!--<div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>-->
-        <!--{% endfor %}-->
-        <div class="container">
-            <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
-                  role="form" onsubmit="submit">
-                <div class="row">
-                    <div id="method_radio" class="form-group col-md-6">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="search_method" id="cik_radio"
-                                   value="cik" checked="true">
-                            <label class="form-check-label" for="cik_radio">CIK Number</label>
+        <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
+              role="form" onsubmit="submit" style="margin-bottom: 0px">
+            <div class="row">
+                <div id="method_radio" class="form-group col-md-6">
+                     <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_method" id="com_radio"
+                               value="name" checked="true">
+                        <label class="form-check-label" for="com_radio">Company Name</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_method" id="cik_radio"
+                               value="cik">
+                        <label class="form-check-label" for="cik_radio">CIK Number</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label id="keyword_label" for="keyword">Company's name keyword</label>
+                    <input type="search" class="form-control" id="keyword" name="keyword"
+                           placeholder="Enter a keyword of company's name">
+                </div>
+                <div id="select_group" class="form-group col-md-5">
+                    <label id="select_label" for="selector">Company's Full Name</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selector" name="company_selector"
+                    title="Please Select a company's name">
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="start_date">Start Date</label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="search_method" id="com_radio"
-                                   value="name">
-                            <label class="form-check-label" for="com_radio">Company Name</label>
-                        </div>
+                        <input class="form-control" id="start_date" name="start_date" placeholder="YYYY-MM-DD"
+                               type="text"/>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-5">
-                        <label id="keyword_label" for="keyword">CIK Number</label>
-                        <input type="search" class="form-control" id="keyword" name="keyword"
-                               placeholder="Enter company's cik number" value="{{ request.form['keyword'] }}">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="start_date">Start Date</label>
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input class="form-control" id="start_date" name="start_date" placeholder="YYYY-MM-DD" type="text"/>
+                <div class="form-group col-md-2">
+                    <label for="end_date">End Date</label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="end_date">End Date</label>
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input class="form-control" id="end_date" name="end_date" placeholder="YYYY-MM-DD" type="text"/>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-5">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <input class="form-control" id="end_date" name="end_date" placeholder="YYYY-MM-DD"
+                               type="text"/>
                     </div>
                 </div>
-            </form>
-        </div>
-
-
-        {% block map %}
-        {% endblock map%}
+            </div>
+            <div class="row">
+                <div class="form-group col-md-5">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
+                </div>
+            </div>
+            <div><label id="loading"></label></div>
+        </form>
     </div>
-</section>
+    {% endblock form %}
+
+    {% block map %}
+    {% endblock map%}
+</div>
+
 <script type="text/javascript">
+
+    $('#keyword').change(function () {
+        setTimeout(function(){
+            $.ajax({
+                type:"POST",
+                dataType: "json",
+                url:"/searchCom",
+                data: $('form').serialize(),
+                success:function(data){
+                    console.log(data)
+                    $("#selector").empty();
+                    var len=data.length;
+                    for(i=0;i<len;i++){
+                        $("#selector").append($("<option name=\"selector\" value='" + data[i].cik + "'>" + data[i].name + "</option>"));
+                    }
+                    $('#selector').selectpicker("refresh");
+                }
+            })
+        },200)
+    })
+
     $('#method_radio').change(function () {
         var selector = $("input[name='search_method']:checked").val();
         if (selector === 'cik') {
             $('#keyword_label').text("CIK Number");
             $('#keyword').attr("placeholder", "Enter company's cik number");
+            $('#select_group').attr("style","display:none");
         } else {
-            $('#keyword_label').text("Company Name");
-            $('#keyword').attr("placeholder", "Enter company's name");
+            $('#keyword_label').text("Company's name keyword");
+            $('#keyword').attr("placeholder", "Enter a keyword of company's name");
+            $('#select_group').attr("style","display:''");
         }
     });
 
@@ -114,6 +150,12 @@
     }).on("changeDate",function(){
         $("#start_date").datepicker("setEndDate",$("#end_date").val())
     });
+
+    $('#submit-btn').click(function () {
+        var itemList = $('#loading');
+		itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> '
+				+ "Loading results, please wait...." + '</p>';
+    })
     // $("#date").datepicker({
     //     format: "yyyy MM",
     //     startView: 2,

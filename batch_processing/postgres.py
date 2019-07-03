@@ -17,3 +17,7 @@ class PostgresConnector(object):
     def write(self, df, table, mode):
         my_writer = self.get_writer(df)
         my_writer.jdbc(self.url_connect, table, mode, self.properties)
+
+    def loadFromPostGres(self, spark, name):
+        df = spark.read.jdbc ( url=self.url_connect, table=name, properties=self.properties )
+        return df

@@ -1,16 +1,36 @@
 {% extends "index.html" %}
 
 {% block map %}
-<div class="col-md-10" id="map-container">
-    <div id="map">
+<div class="container-fluid content" id="map-container">
+    <div class="container justify-content-md-center">
+        <h4 id="des_query" style="margin-top: 0px">{{ title }}</h4>
+        <label id="cik_label" for="des_cik">CIK Number: &nbsp;</label><span class="descrip" id="des_cik">{{cik}}</span><br>
+        <label id="name_label" for="des_com">Company's Name: &nbsp;</label><span class="descrip" id="des_com">{{name}}</span><br>
+        <label id="time_label" for="des_time">Time Period: &nbsp; </label><span class="descrip" id="des_time">{{period}}</span><br>
+    </div>
+    <div class="container" style="height: auto">
+        <div class="col-md-auto">
+            <div id="map"></div>
+        </div>
     </div>
 </div>
 <script>
-    var data = {{ data | tojson }};
-    console.log(typeof (data))
+    var country_data = {{ country_data | tojson }}
+    var city_data = {{ city_data | tojson }}
     Highcharts.mapChart('map', {
         chart: {
             map: 'custom/world',
+            events: {
+              load: function () {
+                  const points = this.series[1].data
+                  points.forEach((point) => {
+                      const colorAxis = this.colorAxis[0]
+                      const color = colorAxis.toColor(point.value, point)
+                      point.color = color
+                   })
+                  this.redraw()
+              }
+            },
             borderWidth: 1
         },
 
@@ -18,7 +38,7 @@
         //     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
         title: {
-            text: 'Access Count for different countries'
+            text: 'Access Count for Countries and Top 20 Cities'
         },
 
         mapNavigation: {
@@ -30,7 +50,7 @@
             startOnTick: true,
         },
         series: [{
-            data: data,
+            data: country_data,
             joinBy: ['iso-a2', 'country'],
             animation: true,
             name: 'Access Count',
@@ -40,9 +60,31 @@
                 }
             },
             tooltip: {
-                valueSuffix: 'times'
+                headerFormat: '<span style="color:{point.color}">●</span>' +' {point.key}:<br/>',
+                 pointFormat: 'Access count: {point.value}',
+                valueSuffix: ' times'
             },
             shadow: false
+        }, {
+            type: 'mappoint',
+            name: 'Cities',
+            data: city_data,
+            animation: true,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#000',
+            },
+            showInLegend: false,
+            tooltip: {
+                headerFormat: '<span style="color:{point.color}">●</span>' +' {point.key}:<br/>',
+                pointFormat: '{point.name}, {point.country}<br>' +
+                'Access count: {point.value} times'
+            },
+            dataLabels: {
+                enabled: true,
+                crop: true,
+                format: '{point.name}'
+            },
         }]
     });
 
