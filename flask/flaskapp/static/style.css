@@ -1,11 +1,20 @@
 #map {
-    height: auto;
+    height: 100%;
     min-width: 310px;
     max-width: 2000px;
     width:auto;
     margin: 0 auto;
 }
 
+#body-container {
+    height: 100%;
+    position:relative;
+}
+
+#map-container {
+    height: 100%;
+    position:absolute;
+}
 .loading {
     margin-top: 10em;
     text-align: center;

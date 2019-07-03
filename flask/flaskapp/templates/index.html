@@ -22,73 +22,73 @@
 {% endblock navbar%}
 
 {% block content %}
-<section>
+<div class="container-fluid content" id="body-container">
+    {% block form %}
     <div class="container-fluid">
-        {% block form %}
-        <div class="container-fluid">
-            <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
-                  role="form" onsubmit="submit">
-                <div class="row">
-                    <div id="method_radio" class="form-group col-md-6">
-                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="search_method" id="com_radio"
-                                   value="name" checked="true">
-                            <label class="form-check-label" for="com_radio">Company Name</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="search_method" id="cik_radio"
-                                   value="cik">
-                            <label class="form-check-label" for="cik_radio">CIK Number</label>
-                        </div>
+        <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
+              role="form" onsubmit="submit" style="margin-bottom: 0px">
+            <div class="row">
+                <div id="method_radio" class="form-group col-md-6">
+                     <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_method" id="com_radio"
+                               value="name" checked="true">
+                        <label class="form-check-label" for="com_radio">Company Name</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_method" id="cik_radio"
+                               value="cik">
+                        <label class="form-check-label" for="cik_radio">CIK Number</label>
+                    </div>
 
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label id="keyword_label" for="keyword">Company's name keyword</label>
-                        <input type="search" class="form-control" id="keyword" name="keyword"
-                               placeholder="Enter company's cik number">
-                    </div>
-                    <div id="select_group" class="form-group col-md-5">
-                        <label id="select_label" for="selector">Company's Full Name</label>
-                        <select class="selectpicker form-control" data-live-search="true" id="selector" name="company_selector"
-                        title="Please Select a company's name">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="start_date">Start Date</label>
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input class="form-control" id="start_date" name="start_date" placeholder="YYYY-MM-DD"
-                                   type="text"/>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label id="keyword_label" for="keyword">Company's name keyword</label>
+                    <input type="search" class="form-control" id="keyword" name="keyword"
+                           placeholder="Enter a keyword of company's name">
+                </div>
+                <div id="select_group" class="form-group col-md-5">
+                    <label id="select_label" for="selector">Company's Full Name</label>
+                    <select class="selectpicker form-control" data-live-search="true" id="selector" name="company_selector"
+                    title="Please Select a company's name">
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="start_date">Start Date</label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
+                        <input class="form-control" id="start_date" name="start_date" placeholder="YYYY-MM-DD"
+                               type="text"/>
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="end_date">End Date</label>
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input class="form-control" id="end_date" name="end_date" placeholder="YYYY-MM-DD"
-                                   type="text"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="end_date">End Date</label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
+                        <input class="form-control" id="end_date" name="end_date" placeholder="YYYY-MM-DD"
+                               type="text"/>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-5">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-5">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
                 </div>
-            </form>
-        </div>
-        {% endblock form %}
-
-        {% block map %}
-        {% endblock map%}
+            </div>
+            <div><label id="loading"></label></div>
+        </form>
     </div>
-</section>
+    {% endblock form %}
+
+    {% block map %}
+    {% endblock map%}
+</div>
+
 <script type="text/javascript">
 
     $('#keyword').change(function () {
@@ -119,7 +119,7 @@
             $('#select_group').attr("style","display:none");
         } else {
             $('#keyword_label').text("Company's name keyword");
-            $('#keyword').attr("placeholder", "Enter company's name");
+            $('#keyword').attr("placeholder", "Enter a keyword of company's name");
             $('#select_group').attr("style","display:''");
         }
     });
@@ -150,6 +150,12 @@
     }).on("changeDate",function(){
         $("#start_date").datepicker("setEndDate",$("#end_date").val())
     });
+
+    $('#submit-btn').click(function () {
+        var itemList = $('#loading');
+		itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> '
+				+ "Loading results, please wait...." + '</p>';
+    })
     // $("#date").datepicker({
     //     format: "yyyy MM",
     //     startView: 2,

@@ -1,13 +1,14 @@
 {% extends "index.html" %}
 
 {% block map %}
-<div class="container-fluid" id="map-container">
-    <!--<div class="container justify-content-md-center">-->
-        <!--<span class="descrip" id="des_cik">{{cik}}</span><br>-->
-        <!--<span class="descrip" id="des_com">{{name}}</span><br>-->
-        <!--<span class="descrip" id="time">{{period}}</span><br>-->
-    <!--</div>-->
-    <div class="container">
+<div class="container-fluid content" id="map-container">
+    <div class="container justify-content-md-center">
+        <h4 id="des_query" style="margin-top: 0px">{{ title }}</h4>
+        <label id="cik_label" for="des_cik">CIK Number: &nbsp;</label><span class="descrip" id="des_cik">{{cik}}</span><br>
+        <label id="name_label" for="des_com">Company's Name: &nbsp;</label><span class="descrip" id="des_com">{{name}}</span><br>
+        <label id="time_label" for="des_time">Time Period: &nbsp; </label><span class="descrip" id="des_time">{{period}}</span><br>
+    </div>
+    <div class="container" style="height: auto">
         <div class="col-md-auto">
             <div id="map"></div>
         </div>
@@ -37,7 +38,7 @@
         //     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
         title: {
-            text: 'Access Count for different countries'
+            text: 'Access Count for different countries and top 20 cities'
         },
 
         mapNavigation: {

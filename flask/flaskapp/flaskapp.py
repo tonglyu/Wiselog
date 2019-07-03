@@ -56,12 +56,12 @@ def search_name():
             cik = request.form['keyword']
         else:
             cik = request.form['company_selector']
-            name = request.form.get('selector')
 
         start_date = request.form['start_date']
         end_date = request.form['end_date']
+
         conn = engine.connect()
-        country_res, city_res = postgresDB.seachAcessCount(conn, cik, method, start_date, end_date)
+        name, country_res, city_res = postgresDB.seachAcessCount(conn, cik, method, start_date, end_date)
         conn.close()
     period = 'From ' + start_date + ' to ' + end_date
     country_data = []
@@ -83,7 +83,7 @@ def search_name():
         tmp['lon'] = city_res[i][6]
         city_data.append ( tmp )
 
-    return render_template('map.html', cik=cik, name=name, period=period,country_data = country_data, city_data = city_data)
+    return render_template('map.html', title="Query result", cik=cik, name=name, period=period,country_data = country_data, city_data = city_data)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, threaded=True)
