@@ -8,11 +8,15 @@
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link" href="{{ url_for('index') }}">Search</a>
-            <!--<a class="nav-item nav-link" href="https://github.com/ZiweiYuan/UnivBoard">Github</a>-->
-        </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="#">About</a>
+            </li>
+        </ul>
     </div>
 </nav>
 {% endblock navbar%}
@@ -20,9 +24,7 @@
 {% block content %}
 <section>
     <div class="container-fluid">
-        <!--{% for post in posts %}-->
-        <!--<div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>-->
-        <!--{% endfor %}-->
+        {% block form %}
         <div class="container-fluid">
             <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
                   role="form" onsubmit="submit">
@@ -81,7 +83,7 @@
                 </div>
             </form>
         </div>
-
+        {% endblock form %}
 
         {% block map %}
         {% endblock map%}

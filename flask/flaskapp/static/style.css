@@ -1,6 +1,17 @@
 #map {
-    height: 500px;
+    height: auto;
     min-width: 310px;
-    max-width: 800px;
+    max-width: 2000px;
+    width:auto;
     margin: 0 auto;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+.nav-title {
+    font-size: x-large;
 }
