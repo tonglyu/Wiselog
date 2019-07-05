@@ -11,13 +11,12 @@ default_args = {
                 'owner': 'tong_insight',
                 'depends_on_past': False,
                 'start_date': datetime(2016, 1, 1),
-                'end_date': datetime(2017, 5, 31),
+                'end_date': datetime(2016, 12, 31),
                 'retries': 2,
                 'retry_delay': timedelta(minutes=1),
                 }
 
 dag = DAG('wiseLog_dag', default_args = default_args, schedule_interval = timedelta(days=1))
-configuration = " --conf spark.default.parallelism=30 "
 postgres_package = " --packages org.postgresql:postgresql:42.2.5 "
 spark_file = "/home/ubuntu/batch_process.py"
 data_ingest_file = "/home/ubuntu/dataIngestion.py"
@@ -30,9 +29,8 @@ download_data = BashOperator(
 
 spark_master_bp = BashOperator(
                     task_id = "spark_master_batch",
-                    bash_command = "spark-submit --master spark://10.0.0.6:7077" \
-                                   + configuration
-                                    +postgres_package
+                    bash_command = "/usr/local/spark/bin/spark-submit --master spark://10.0.0.6:7077"
+                                   + postgres_package
                                    + spark_file + " {{ ds }}",
                     dag = dag)
 

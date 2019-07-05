@@ -220,6 +220,10 @@ Scala 2.11.12 is better to use with Java8, so donot install Java11.
    ```
    airflow webserver -p 8082
    ```
+6. Delete dag
+   ```commandline
+   airflow delete_dag wiselog_dag
+   ```
 
 ## [Install Flask WSGI](https://medium.com/@jQN/deploy-a-flask-app-on-aws-ec2-1850ae4b0d41)
 1. Install the apache webserver
