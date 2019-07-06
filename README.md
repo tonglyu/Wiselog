@@ -52,9 +52,10 @@ To provide that part of information to companies, WiseLog is a platform for comp
   Apache Spark is a fast and general-purpose cluster computing system. In this project, Spark was used to process batch of historical log data. IP geolocation database ([GeoLite2-City.mmdb](https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz)) was integrated in spark job to transform the ip address to geoname_id (A unique identifier for the network's location (country and city respectively) as specified by [GeoNames](https://www.geonames.org/).)      
   After transformation, the daily aggregation count for each company in different cities were stored in PostgresSQL.
   The detailed data processing steps for daily log file data in spark is as follows:
-  * Step1: select columns with important information (date, ip, cik) from source data           
+  * Step1: select columns with important information (date, ip, cik) from source data     
+        
     | date | ip | cik 
-    | :--: | :--: | :--: |
+    | :------: | :------: | :------: |
     | 2016-01-01 | 145.90.38.4| 1111111
     | 2016-01-01 | 145.90.38.4| 1111111
     | 2016-01-01 | 145.90.38.4| 1111111
@@ -62,21 +63,24 @@ To provide that part of information to companies, WiseLog is a platform for comp
     | 2016-01-01 | 145.90.38.4| 2222222
     | 2016-01-01 | 145.90.20.5| 1111111
     | 2016-01-01 | 145.90.20.5| 1111111
-  * Step2: Aggregate by (ip, cik)           
+  * Step2: Aggregate by (ip, cik)    
+         
     | date | ip | cik | count
-    | :--: | :--: | :--: | :--:
+    | :------: | :------: | :------: | :------: |
     | 2016-01-01 | 145.90.38.4| 1111111 | 3
     | 2016-01-01 | 145.90.38.4| 2222222 | 2
     | 2016-01-01 | 145.90.20.5| 1111111 | 2
-  * Step3: Transform ip address to geoname_id for each city by calling API of GeoLite-City.mmdb, different ip address may be tranformed into same geoname_id.           
+  * Step3: Transform ip address to geoname_id for each city by calling API of GeoLite-City.mmdb, different ip address may be tranformed into same geoname_id. 
+            
     | date | geoname_id | cik | count
-    | :--: | :--: | :--: | :--:
+    | :------: | :------: | :------: | :------: |
     | 2016-01-01 | 123456| 1111111 | 3
     | 2016-01-01 | 123456| 2222222 | 2
     | 2016-01-01 | 123456| 1111111 | 2
-  * Step4: Aggregate again by (geoname_id, cik)         
+  * Step4: Aggregate again by (geoname_id, cik) 
+          
     | date | geoname_id | cik | count
-    | :--: | :--: | :--: | :--:
+    | :------: | :------: | :------: | :------: |
     | 2016-01-01 | 123456| 1111111 | 5
     | 2016-01-01 | 123456| 2222222 | 2
     
