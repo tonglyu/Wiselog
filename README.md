@@ -10,8 +10,12 @@ Surfacing investment opportunities
     - [4. ARCHITECTURE](#4-architecture)
         - [4.1 Environment Setup](#41-environment-setup)
         - [4.2 Data Ingestion](#42-data-ingestion)
+            - [4.2.1 Amazon AWS S3](#421-amazon-aws-s3)
         - [4.3 Batch Processing](#43-batch-processing)
+            - [4.3.1 Apache Spark](#431-apache-spark)
+            - [4.3.2 PostgresSQL](#432-postgressql)
         - [4.4 User Interface](#44-user-interface)
+            - [4.4.1 Flask](#441-flask)
     - [5. ENGINEERING CHALLENGES](#5-engineering-challenges)
 
 <!-- /TOC -->
@@ -41,13 +45,42 @@ To provide that part of information to companies, WiseLog is a platform for comp
 ### 4.1 Environment Setup
  For environment configuration and tools setup, please refer to [SETUP.md](./SETUP.md).
 ### 4.2 Data Ingestion
-* Amazon AWS S3      
+#### 4.2.1 Amazon AWS S3      
   AWS S3 is a way for long term storage. The data file was first downloaded and uncompressed to an EC2 instance. Since the every single uncompressed file is almost 3GB, I then gzipped it and stored it in AWS S3 bucket, which compressed into only ~170GB in total and then removed all files in EC2 instance. 
 ### 4.3 Batch Processing
-* Apache Spark      
+#### 4.3.1 Apache Spark      
   Apache Spark is a fast and general-purpose cluster computing system. In this project, Spark was used to process batch of historical log data. IP geolocation database ([GeoLite2-City.mmdb](https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz)) was integrated in spark job to transform the ip address to geoname_id (A unique identifier for the network's location (country and city respectively) as specified by [GeoNames](https://www.geonames.org/).)      
-  After transformation, the aggregation count for each company in different city were stored in PostgresSQL.
-* PostgresSQL       
+  After transformation, the daily aggregation count for each company in different cities were stored in PostgresSQL.
+  The detailed data processing steps for daily log file data in spark is as follows:
+  * Step1: select columns with important information (date, ip, cik) from source data
+    | date | ip | cik 
+    | :--: | :--: | :--: |
+    | 2016-01-01 | 145.90.38.4| 1111111
+    | 2016-01-01 | 145.90.38.4| 1111111
+    | 2016-01-01 | 145.90.38.4| 1111111
+    | 2016-01-01 | 145.90.38.4| 2222222
+    | 2016-01-01 | 145.90.38.4| 2222222
+    | 2016-01-01 | 145.90.20.5| 1111111
+    | 2016-01-01 | 145.90.20.5| 1111111
+  * Step2: Aggregate by (ip, cik)
+    | date | ip | cik | count
+    | :--: | :--: | :--: | :--:
+    | 2016-01-01 | 145.90.38.4| 1111111 | 3
+    | 2016-01-01 | 145.90.38.4| 2222222 | 2
+    | 2016-01-01 | 145.90.20.5| 1111111 | 2
+  * Step3: Transform ip address to geoname_id for each city by calling API of GeoLite-City.mmdb, different ip address may be tranformed into same geoname_id.
+    | date | geoname_id | cik | count
+    | :--: | :--: | :--: | :--:
+    | 2016-01-01 | 123456| 1111111 | 3
+    | 2016-01-01 | 123456| 2222222 | 2
+    | 2016-01-01 | 123456| 1111111 | 2
+  * Step4: Aggregate again by (geoname_id, cik)
+    | date | geoname_id | cik | count
+    | :--: | :--: | :--: | :--:
+    | 2016-01-01 | 123456| 1111111 | 5
+    | 2016-01-01 | 123456| 2222222 | 2
+    
+#### 4.3.2 PostgresSQL       
   To reduce the number of data in database, the results of log processing only include identifier for each company and each city (country), which is used for groupBy operation. While detailed information of companies and cities are stored in other two separate tables. Three tables are stored in PostgresSQL:    
      
   * log_geo_location table:     
@@ -82,6 +115,12 @@ To provide that part of information to companies, WiseLog is a platform for comp
 * Airflow       
   Scheduling and monitoring workflow of downloading data to s3 and spark batch processing.
 ### 4.4 User Interface
-* Flask     
+#### 4.4.1 Flask     
   Front-end application to get user access insights of companies in different areas during a time period. Connection between pipeline users and the PostgreSQL database.
 ## 5. ENGINEERING CHALLENGES
+* Map patitions     
+  Since ip geolocation database is used to tranform ip address in [Step2 in spark batch proceesing](#431-apache-spark), spark job is required to connect to that database and performed transformation. As a result, mapPartition() rather than map() was used to speed up processing procedure. Connection creation and cleanup tasks are expensive, doing for each element makes code inefficient. This applies to database or rest connections. But using mapPartitions, i can do init/cleanup cycle only once for whole partition. 
+
+  In addition, it is suggested that 2-3 times of cores of tasks should be assigned. Thus, i defined 30 tasks (10 cores) in my spark job.
+* Map side join     
+  In spark, if we want to join a large table with a small table, we can broadcast the small table to each worker (storing in the memory). It can improve the efficiency of joining tales, compared to the default join method: shuffle hash join.
