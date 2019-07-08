@@ -1,30 +1,28 @@
 # Wise Log
 Surfacing investment opportunities
-
 <!-- TOC -->
 
 - [Wise Log](#wise-log)
-    - [1. PROJECT ARTIFACTS](#1-project-artifacts)
-    - [2. INTRODUCTION](#2-introduction)
-    - [3. DATASETS](#3-datasets)
-    - [4. ARCHITECTURE](#4-architecture)
-        - [4.1 Environment Setup](#41-environment-setup)
-        - [4.2 Data Ingestion](#42-data-ingestion)
-            - [4.2.1 Amazon AWS S3](#421-amazon-aws-s3)
-        - [4.3 Batch Processing](#43-batch-processing)
-            - [4.3.1 Apache Spark](#431-apache-spark)
-            - [4.3.2 PostgresSQL](#432-postgressql)
-        - [4.4 User Interface](#44-user-interface)
-            - [4.4.1 Flask](#441-flask)
-    - [5. ENGINEERING CHALLENGES](#5-engineering-challenges)
+  - [1. PROJECT ARTIFACTS](#1-project-artifacts)
+  - [2. INTRODUCTION](#2-introduction)
+  - [3. DATASETS](#3-datasets)
+  - [4. ARCHITECTURE](#4-architecture)
+    - [4.1 Environment Setup](#41-environment-setup)
+    - [4.2 Data Ingestion](#42-data-ingestion)
+      - [4.2.1 Amazon AWS S3](#421-amazon-aws-s3)
+    - [4.3 Batch Processing](#43-batch-processing)
+      - [4.3.1 Apache Spark](#431-apache-spark)
+      - [4.3.2 PostgresSQL](#432-postgressql)
+    - [4.4 User Interface](#44-user-interface)
+      - [4.4.1 Flask](#441-flask)
+  - [5. ENGINEERING CHALLENGES](#5-engineering-challenges)
 
 <!-- /TOC -->
 
-
 ## 1. PROJECT ARTIFACTS 
-* [Demostration URL](wiselog.club)
-* [Presentation Slide](bit.ly/wiselog_demo)
-* Demostration vedio
+* [Demostration URL](http://wiselog.club)
+* [Presentation Slide](https://bit.ly/wiselog_demo)
+* [Demostration vedio](https://youtu.be/3tgIv4Vl0i0)
   
 ## 2. INTRODUCTION
 In different development stages, companies always want to attract more investors for investment due to different reaseons, such as getting start a new service, expanding market and exploring new collaboration, etc. It is necessary to identify the areas with more investors who are interested in our companies. However, the information of potential investors are not intuitive for companies.      
