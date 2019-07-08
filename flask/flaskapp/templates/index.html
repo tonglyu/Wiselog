@@ -127,26 +127,26 @@
 
     $('#start_date').datepicker({
         format: "yyyy-mm-dd",
-        startView: 2,
+        startView: 1,
         maxViewMode: 1,
         minViewMode: 0,
         autoclose: true,
         readonly: true,
         startDate: "2016-01-01",
-        endDate: "2017-06-30"
+        endDate: "2016-12-31"
     }).on("changeDate",function(){
         $("#end_date").datepicker("setStartDate",$("#start_date").val())
     });
 
     $('#end_date').datepicker({
         format: "yyyy-mm-dd",
-        startView: 2,
+        startView: 1,
         maxViewMode: 1,
         minViewMode: 0,
         autoclose: true,
         readonly: true,
         startDate: "2016-01-01",
-        endDate: "2017-06-30"
+        endDate: "2016-12-31"
     }).on("changeDate",function(){
         $("#start_date").datepicker("setEndDate",$("#end_date").val())
     });
