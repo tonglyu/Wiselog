@@ -121,8 +121,6 @@ To provide that part of information to companies, WiseLog is a platform for comp
   Front-end application to get user access insights of companies in different areas during a time period. Connection between pipeline users and the PostgreSQL database.
 ## 5. ENGINEERING CHALLENGES
 * Map patitions     
-  Since ip geolocation database is used to tranform ip address in [Step2 in spark batch proceesing](#431-apache-spark), spark job is required to connect to that database and performed transformation. As a result, mapPartition() rather than map() was used to speed up processing procedure. Connection creation and cleanup tasks are expensive, doing for each element makes code inefficient. This applies to database or rest connections. But using mapPartitions, i can do init/cleanup cycle only once for whole partition. 
+  Since ip geolocation database is used to transform ip address in [Step3 in spark batch proceesing](#431-apache-spark), spark job is required to connect to that database and performed transformation. As a result, mapPartition() rather than map() was used to speed up processing procedure. Connection creation and cleanup tasks are expensive, doing for each element makes code inefficient. This applies to database or rest connections. But using mapPartitions, i can do init/cleanup cycle only once for whole partition. 
 
-  In addition, it is suggested that 2-3 times of cores of tasks should be assigned. Thus, i defined 30 tasks (10 cores) in my spark job.
-* Map side join     
-  In spark, if we want to join a large table with a small table, we can broadcast the small table to each worker (storing in the memory). It can improve the efficiency of joining tales, compared to the default join method: shuffle hash join.
+  In addition, it is suggested that 2-3 times of cores of tasks should be assigned. Thus, i defined 30 tasks (10 cores) in my spark job. That reduced the processing time by 40%.
