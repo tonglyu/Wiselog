@@ -46,7 +46,6 @@ def search_company():
         tmp["name"] = str ( companies_res[i][1]  ).strip ().title ()
         companies.append ( tmp )
     return json.dumps(companies)
-    #
 
 @app.route('/search',methods=['GET', 'POST'])
 def search_name():
