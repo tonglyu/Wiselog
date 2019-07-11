@@ -66,20 +66,20 @@ def search_name():
     country_data = []
     for i in range ( len ( country_res ) ):
         tmp = {}
-        tmp['country'] = country_res[i][1]
-        tmp['value'] = int ( country_res[i][2] )
-        tmp['name'] = country_res[i][1]
+        tmp['country'] = country_res[i][0]
+        tmp['value'] = int ( country_res[i][1] )
+        tmp['name'] = country_res[i][0]
         country_data.append ( tmp )
 
     city_data = []
     for i in range ( len ( city_res ) ):
         tmp = {}
-        tmp['value'] = int ( city_res[i][1])
-        tmp['country'] = city_res[i][2]
-        tmp['region'] = city_res[i][3]
-        tmp['name'] = city_res[i][4]
-        tmp['lat'] = city_res[i][5]
-        tmp['lon'] = city_res[i][6]
+        tmp['value'] = int ( city_res[i][0])
+        tmp['country'] = city_res[i][1]
+        tmp['region'] = city_res[i][2]
+        tmp['name'] = city_res[i][3]
+        tmp['lat'] = city_res[i][4]
+        tmp['lon'] = city_res[i][5]
         city_data.append ( tmp )
 
     return render_template('map.html', title="Query result", cik=cik, name=name, period=period,country_data = country_data, city_data = city_data)

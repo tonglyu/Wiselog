@@ -37,18 +37,18 @@ def seachAcessCount(conn,keyword, method, start_date, end_date):
     name = conn.execute('''select name from cik_company where cik = %s''', cik).fetchall()
 
     country_query = '''
-    select cik, country_iso_code, sum(count) as total 
+    select country_iso_code, sum(count) as total 
     from log_geolocation
     where cik = %s and (date between %s and %s) 
-    group by (cik, country_iso_code)
+    group by country_iso_code
     '''
     country = conn.execute ( country_query, (cik, start_date, end_date) )
     city_query = '''
-    select log.cik as cik, log.total as total, coord.country_name as country_name, coord.region_name as region, 
+    select log.total as total, coord.country_name as country_name, coord.region_name as region, 
     coord.city_name as city, coord.lat as lat, coord.lng as lng
-    from (select cik, geoname_id, sum(count) as total from log_geolocation
+    from (select geoname_id, sum(count) as total from log_geolocation
                              where cik = %s and (date between %s and %s)
-                             group by (cik, geoname_id) order by total desc limit 20) log
+                             group by geoname_id order by total desc limit 20) log
     inner join city_coordinates coord on log.geoname_id = coord.geoname_id limit 20'''
     city = conn.execute ( city_query, (cik, start_date, end_date) )
 
