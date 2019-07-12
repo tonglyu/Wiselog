@@ -14,7 +14,7 @@
                 <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="#">About</a>
+                <a class="nav-item nav-link" class="nav-title" style="font-size: large" href="https://github.com/tonglyu/Wiselog">About</a>
             </li>
         </ul>
     </div>
@@ -26,7 +26,7 @@
     {% block form %}
     <div class="container-fluid">
         <form action="{{ url_for('search_name') }}" method="post" class="container" id="form"
-              role="form" onsubmit="submit" style="margin-bottom: 0px">
+              role="form" onsubmit="submit" style=" margin:auto; min-width: 1000px; font-size: 1.1em">
             <div class="row">
                 <div id="method_radio" class="form-group col-md-6">
                      <div class="form-check form-check-inline">
