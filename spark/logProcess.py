@@ -23,7 +23,7 @@ sc.addFile ( geoPath )
 
 bucket = "loghistory"
 
-def read_csv_from_s3(date):
+def read_log_file(date):
     schema_list = [
         ('ip', 'STRING'),
         ('date', 'STRING'),
@@ -47,6 +47,14 @@ def read_csv_from_s3(date):
     mode = "PERMISSIVE"
 
     return spark.read.csv ( file_zip, header=True, mode=mode, schema=schema )
+
+def read_geo_lite():
+    geolite_file = "s3a://{bucket}/{file_name}".format ( bucket=bucket, file_name="GeoLite2-City-Locations-en.csv" )
+    geolite_df = spark.read.csv ( geolite_file, header=True, mode="PERMISSIVE" )
+
+    col_select = ("geoname_id", "country_iso_code")
+    geolite_df = geolite_df.select ( *col_select )
+    return geolite_df
 
 def format_dataframe(csv_df):
     col_select = ("ip","cik","accession")
@@ -91,18 +99,16 @@ def write_to_postgres(out_df, table_name):
     connector = dbConnector.PostgresConnector()
     connector.write(out_df, table, mode)
 
-def run(date, geolite_file):
+def main(date):
     date_format = "".join ( date.split ( "-" ) )
     print("Batch_run_date: ", date)
 
     print("******************************* Begin reading data *******************************\n")
     #Geolocation table ("geoname_id", "country_iso_code")
-    col_select = ("geoname_id", "country_iso_code")
-    geolite_df = spark.read.csv ( geolite_file, header=True, mode= "PERMISSIVE" )
-    geolite_df = geolite_df.select(*col_select)
+    geolite_df = read_geo_lite()
 
-    #Log file table
-    csv_df = read_csv_from_s3 ( date_format )
+    #Log file table ("ip", "cik")
+    csv_df = read_log_file ( date_format )
     ip_cik_format_df = format_dataframe ( csv_df )
     ip_cik_format_df.createOrReplaceTempView ( "ip_cik_table" )
     ip_cik_df = spark.sql("SELECT ip, cik , count(*) AS count FROM ip_cik_table GROUP BY ip, cik")
@@ -114,6 +120,7 @@ def run(date, geolite_file):
     cik_geo_df.show()
     cik_geo_df.createOrReplaceTempView ( "cik_geo_table" )
     cik_geo_agg_df = spark.sql("SELECT cik, geoname_id, sum(count) AS count FROM cik_geo_table GROUP BY cik, geoname_id")
+    # cik, geoname_id, date, count
     cik_geo_agg_df = cik_geo_agg_df.withColumn ( 'date', F.lit(date))
 
     print("******************************* Begin calculate coordinates *******************************\n")
@@ -129,5 +136,4 @@ def run(date, geolite_file):
 
 if __name__ == '__main__':
     date = sys.argv[1]
-    geolite_file = "s3a://{bucket}/{file_name}".format ( bucket=bucket, file_name= "GeoLite2-City-Locations-en.csv" )
-    run ( date, geolite_file )
+    main ( date )
