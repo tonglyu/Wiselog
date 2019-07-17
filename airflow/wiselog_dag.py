@@ -18,7 +18,7 @@ default_args = {
 
 dag = DAG('wiseLog_dag', default_args = default_args, schedule_interval = timedelta(days=1))
 postgres_package = " --packages org.postgresql:postgresql:42.2.5 "
-spark_file = "/home/ubuntu/batch_process.py"
+spark_file = "/home/ubuntu/logProcess.py"
 data_ingest_file = "/home/ubuntu/dataIngestion.py"
 
 download_data = BashOperator(

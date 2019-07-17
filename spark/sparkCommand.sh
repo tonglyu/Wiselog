@@ -1,0 +1,1 @@
+spark-submit --master spark://10.0.0.6:7077 --packages org.postgresql:postgresql:42.2.5 logProcess.py 2016-01-01

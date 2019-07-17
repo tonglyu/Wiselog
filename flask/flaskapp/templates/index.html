@@ -80,7 +80,6 @@
                     <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
                 </div>
             </div>
-            <div><label id="loading"></label></div>
         </form>
     </div>
     {% endblock form %}
@@ -156,15 +155,6 @@
 		itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> '
 				+ "Loading results, please wait...." + '</p>';
     })
-    // $("#date").datepicker({
-    //     format: "yyyy MM",
-    //     startView: 2,
-    //     maxViewMode: 1,
-    //     minViewMode: 1,
-    //     autoclose: true,
-    //     startDate: "2016-01",
-    //     endDate: "2017-06"
-    // })
 </script>
 {% endblock content%}
 
