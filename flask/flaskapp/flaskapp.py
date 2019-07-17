@@ -16,15 +16,6 @@ db = postgresDB.db
 
 engine = db.get_engine()
 metadata = MetaData()
-company_geo_table = Table('company_geo_table', metadata,
-                          Column ( 'geoname_id', String ),
-                          Column ('date', Date),
-                          Column ('cik', String),
-                          Column ('count', BigInteger),
-                          Column ('country_iso_code', String),
-                          Column ('subdivision_1_name', String),
-                          Column ('city_name', String),
-                          autoload=True, autoload_with=engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
